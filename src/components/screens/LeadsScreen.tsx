@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Search, Filter, ChevronDown, Mail, Phone, Globe, MapPin, ArrowRight } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
@@ -22,6 +22,12 @@ export default function LeadsScreen() {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
+
+  // Escape key closes drawer
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedLead(null) }
+    if (selectedLead) { document.addEventListener('keydown', handleEsc); return () => document.removeEventListener('keydown', handleEsc) }
+  }, [selectedLead])
 
   const filteredLeads = mockLeads.filter(
     (lead) =>
@@ -157,13 +163,13 @@ export default function LeadsScreen() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-800 bg-slate-900">
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Lead</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Business</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Score</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Budget</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Source</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Updated</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Lead</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Business</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Status</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Score</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Budget</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Source</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-400">Updated</th>
                 </tr>
               </thead>
               <tbody>

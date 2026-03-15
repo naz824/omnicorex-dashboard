@@ -57,8 +57,8 @@ export default function BookingsScreen() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
                       <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-slate-800">
-                        <span className="text-lg font-bold text-white">{booking.preferred_date.split('-')[2]}</span>
-                        <span className="text-xs text-slate-400">Mar</span>
+                        <span className="text-lg font-bold text-white">{parseInt(booking.preferred_date.split('-')[2], 10)}</span>
+                        <span className="text-xs text-slate-400">{new Date(booking.preferred_date + 'T00:00:00').toLocaleString('en-US', { month: 'short' })}</span>
                       </div>
                       <div>
                         <h3 className="font-semibold text-white">{booking.name}</h3>

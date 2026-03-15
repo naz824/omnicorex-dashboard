@@ -38,9 +38,52 @@ function IntegrationCard({ name, description, icon, connected, onConnect }: Inte
   )
 }
 
+const ENV_KEYS = [
+  'VITE_SUPABASE_URL',
+  'VITE_SUPABASE_ANON_KEY',
+  'VITE_STRIPE_PUBLISHABLE_KEY',
+  'VITE_GOOGLE_CLIENT_ID',
+  'VITE_GOOGLE_CALENDAR_API_KEY',
+] as const
+
+function getEnvStatus(key: string): boolean {
+  const val = import.meta.env[key]
+  return typeof val === 'string' && val.length > 0
+}
+
+const DEFAULT_NOTIFICATIONS: Record<string, boolean> = {
+  'New lead received': true,
+  'Approval required': true,
+  'Booking confirmed': true,
+  'Project milestone': true,
+  'Agent errors': true,
+  'Weekly summary': false,
+}
+
+const DEFAULT_APPROVAL_RULES: Record<string, boolean> = {
+  'All client-facing emails': true,
+  'Proposals and quotes': true,
+  'Production deployments': true,
+  'Design presentations': true,
+  'Financial commitments over $1,000': true,
+  'Project scope changes': true,
+  'Internal research tasks': false,
+  'Code development (non-deploy)': false,
+}
+
 export default function SettingsScreen() {
   const [activeTab, setActiveTab] = useState('general')
+  const [notifs, setNotifs] = useState(DEFAULT_NOTIFICATIONS)
+  const [rules, setRules] = useState(DEFAULT_APPROVAL_RULES)
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
+
+  const toggleNotif = (key: string) => setNotifs(prev => ({ ...prev, [key]: !prev[key] }))
+  const toggleRule = (key: string) => setRules(prev => ({ ...prev, [key]: !prev[key] }))
+
+  const supabaseConnected = getEnvStatus('VITE_SUPABASE_URL') && getEnvStatus('VITE_SUPABASE_ANON_KEY')
+  const stripeConnected = getEnvStatus('VITE_STRIPE_PUBLISHABLE_KEY')
+  const gmailConnected = getEnvStatus('VITE_GOOGLE_CLIENT_ID')
+  const calendarConnected = getEnvStatus('VITE_GOOGLE_CALENDAR_API_KEY')
 
   const tabs = [
     { id: 'general', label: 'General', icon: Globe },
@@ -127,31 +170,34 @@ export default function SettingsScreen() {
         {/* Integrations */}
         {activeTab === 'integrations' && (
           <div className="space-y-4">
-            <IntegrationCard name="Supabase" description="PostgreSQL database, authentication, and real-time subscriptions" icon={<Database className="h-5 w-5 text-emerald-400" />} connected={false} onConnect={() => {}} />
-            <IntegrationCard name="Stripe" description="Payment processing, invoices, and subscription management" icon={<CreditCard className="h-5 w-5 text-purple-400" />} connected={false} onConnect={() => {}} />
-            <IntegrationCard name="Gmail" description="Send and receive emails, manage drafts and labels" icon={<Mail className="h-5 w-5 text-red-400" />} connected={false} onConnect={() => {}} />
-            <IntegrationCard name="Google Calendar" description="Schedule meetings, check availability, manage events" icon={<Calendar className="h-5 w-5 text-blue-400" />} connected={false} onConnect={() => {}} />
+            <IntegrationCard name="Supabase" description="PostgreSQL database, authentication, and real-time subscriptions" icon={<Database className="h-5 w-5 text-emerald-400" />} connected={supabaseConnected} onConnect={() => window.open('https://supabase.com/dashboard', '_blank')} />
+            <IntegrationCard name="Stripe" description="Payment processing, invoices, and subscription management" icon={<CreditCard className="h-5 w-5 text-purple-400" />} connected={stripeConnected} onConnect={() => window.open('https://dashboard.stripe.com/apikeys', '_blank')} />
+            <IntegrationCard name="Gmail" description="Send and receive emails, manage drafts and labels" icon={<Mail className="h-5 w-5 text-red-400" />} connected={gmailConnected} onConnect={() => window.open('https://console.cloud.google.com/apis/credentials', '_blank')} />
+            <IntegrationCard name="Google Calendar" description="Schedule meetings, check availability, manage events" icon={<Calendar className="h-5 w-5 text-blue-400" />} connected={calendarConnected} onConnect={() => window.open('https://console.cloud.google.com/apis/credentials', '_blank')} />
 
             <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
               <h2 className="mb-2 text-base font-semibold text-white">Environment Variables</h2>
               <p className="mb-4 text-sm text-slate-400">Copy <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-400">.env.example</code> to <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-400">.env</code> and configure your API keys.</p>
               <div className="space-y-2">
-                {[
-                  { key: 'VITE_SUPABASE_URL', status: false },
-                  { key: 'VITE_SUPABASE_ANON_KEY', status: false },
-                  { key: 'VITE_STRIPE_PUBLISHABLE_KEY', status: false },
-                  { key: 'VITE_GOOGLE_CLIENT_ID', status: false },
-                  { key: 'VITE_GOOGLE_CALENDAR_API_KEY', status: false },
-                ].map((envVar) => (
-                  <div key={envVar.key} className="flex items-center justify-between rounded-lg bg-slate-800/50 px-3 py-2">
-                    <code className="text-sm text-slate-300">{envVar.key}</code>
-                    {envVar.status ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                    ) : (
-                      <AlertCircle className="h-4 w-4 text-amber-400" />
-                    )}
-                  </div>
-                ))}
+                {ENV_KEYS.map((key) => {
+                  const isSet = getEnvStatus(key)
+                  return (
+                    <div key={key} className="flex items-center justify-between rounded-lg bg-slate-800/50 px-3 py-2">
+                      <code className="text-sm text-slate-300">{key}</code>
+                      {isSet ? (
+                        <div className="flex items-center gap-1.5">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          <span className="text-xs text-emerald-400">Set</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          <AlertCircle className="h-4 w-4 text-amber-400" />
+                          <span className="text-xs text-amber-400">Missing</span>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -163,34 +209,38 @@ export default function SettingsScreen() {
             <h2 className="mb-4 text-base font-semibold text-white">Notification Preferences</h2>
             <div className="space-y-4">
               {[
-                { label: 'New lead received', description: 'Get notified when a new lead comes in from the website', default: true },
-                { label: 'Approval required', description: 'Alert when an agent submits work for your review', default: true },
-                { label: 'Booking confirmed', description: 'Notification when a discovery call is booked', default: true },
-                { label: 'Project milestone', description: 'Updates when a project reaches a new phase', default: true },
-                { label: 'Agent errors', description: 'Alert when an agent encounters an error', default: true },
-                { label: 'Weekly summary', description: 'Weekly digest of all activity and metrics', default: false },
-              ].map((pref) => (
-                <div key={pref.label} className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-white">{pref.label}</p>
-                    <p className="text-xs text-slate-400">{pref.description}</p>
+                { label: 'New lead received', description: 'Get notified when a new lead comes in from the website' },
+                { label: 'Approval required', description: 'Alert when an agent submits work for your review' },
+                { label: 'Booking confirmed', description: 'Notification when a discovery call is booked' },
+                { label: 'Project milestone', description: 'Updates when a project reaches a new phase' },
+                { label: 'Agent errors', description: 'Alert when an agent encounters an error' },
+                { label: 'Weekly summary', description: 'Weekly digest of all activity and metrics' },
+              ].map((pref) => {
+                const isOn = notifs[pref.label] ?? false
+                return (
+                  <div key={pref.label} className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-white">{pref.label}</p>
+                      <p className="text-xs text-slate-400">{pref.description}</p>
+                    </div>
+                    <button
+                      onClick={() => toggleNotif(pref.label)}
+                      className={cn(
+                        'relative h-6 w-11 rounded-full transition-colors',
+                        isOn ? 'bg-cyan-400' : 'bg-slate-700'
+                      )}
+                      role="switch"
+                      aria-checked={isOn}
+                      aria-label={pref.label}
+                    >
+                      <span className={cn(
+                        'absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform',
+                        isOn ? 'left-[22px]' : 'left-0.5'
+                      )} />
+                    </button>
                   </div>
-                  <button
-                    className={cn(
-                      'relative h-6 w-11 rounded-full transition-colors',
-                      pref.default ? 'bg-cyan-400' : 'bg-slate-700'
-                    )}
-                    role="switch"
-                    aria-checked={pref.default}
-                    aria-label={pref.label}
-                  >
-                    <span className={cn(
-                      'absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform',
-                      pref.default ? 'left-[22px]' : 'left-0.5'
-                    )} />
-                  </button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
@@ -202,34 +252,29 @@ export default function SettingsScreen() {
               <h2 className="mb-4 text-base font-semibold text-white">Approval Rules</h2>
               <p className="mb-4 text-sm text-slate-400">Configure which actions require your approval before agents can proceed.</p>
               <div className="space-y-3">
-                {[
-                  { label: 'All client-facing emails', required: true },
-                  { label: 'Proposals and quotes', required: true },
-                  { label: 'Production deployments', required: true },
-                  { label: 'Design presentations', required: true },
-                  { label: 'Financial commitments over $1,000', required: true },
-                  { label: 'Project scope changes', required: true },
-                  { label: 'Internal research tasks', required: false },
-                  { label: 'Code development (non-deploy)', required: false },
-                ].map((rule) => (
-                  <div key={rule.label} className="flex items-center justify-between rounded-lg bg-slate-800/50 px-4 py-3">
-                    <span className="text-sm text-slate-300">{rule.label}</span>
-                    <button
-                      className={cn(
-                        'relative h-6 w-11 rounded-full transition-colors',
-                        rule.required ? 'bg-cyan-400' : 'bg-slate-700'
-                      )}
-                      role="switch"
-                      aria-checked={rule.required}
-                      aria-label={rule.label}
-                    >
-                      <span className={cn(
-                        'absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform',
-                        rule.required ? 'left-[22px]' : 'left-0.5'
-                      )} />
-                    </button>
-                  </div>
-                ))}
+                {Object.keys(DEFAULT_APPROVAL_RULES).map((label) => {
+                  const isOn = rules[label] ?? false
+                  return (
+                    <div key={label} className="flex items-center justify-between rounded-lg bg-slate-800/50 px-4 py-3">
+                      <span className="text-sm text-slate-300">{label}</span>
+                      <button
+                        onClick={() => toggleRule(label)}
+                        className={cn(
+                          'relative h-6 w-11 rounded-full transition-colors',
+                          isOn ? 'bg-cyan-400' : 'bg-slate-700'
+                        )}
+                        role="switch"
+                        aria-checked={isOn}
+                        aria-label={label}
+                      >
+                        <span className={cn(
+                          'absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform',
+                          isOn ? 'left-[22px]' : 'left-0.5'
+                        )} />
+                      </button>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

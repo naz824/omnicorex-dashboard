@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Bot, Zap, Clock, CheckCircle2, Settings, Play, Pause } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
@@ -11,6 +11,11 @@ import type { AgentConfig } from '@/types'
 export default function AgentsScreen() {
   const [selectedAgent, setSelectedAgent] = useState<AgentConfig | null>(null)
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedAgent(null) }
+    if (selectedAgent) { document.addEventListener('keydown', handleEsc); return () => document.removeEventListener('keydown', handleEsc) }
+  }, [selectedAgent])
 
   const totalTasksToday = mockAgents.reduce((sum, a) => sum + a.tasks_completed_today, 0)
   const activeCount = mockAgents.filter(a => a.status === 'working' || a.status === 'waiting_approval').length

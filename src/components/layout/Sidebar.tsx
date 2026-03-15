@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Users, Calendar, FolderKanban, Bot, ShieldCheck, BarChart3, Settings, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { useSidebarState } from '@/context/sidebar'
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Users, Calendar, FolderKanban, Bot, ShieldCheck, BarChart3, Settings,
@@ -23,7 +23,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ pendingApprovals }: SidebarProps) {
-  const [collapsed, setCollapsed] = useState(false)
+  const { collapsed, setCollapsed } = useSidebarState()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -63,7 +63,7 @@ export default function Sidebar({ pendingApprovals }: SidebarProps) {
               key={item.href}
               onClick={() => navigate(item.href)}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                'relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 isActive
                   ? 'bg-cyan-400/10 text-cyan-400'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'

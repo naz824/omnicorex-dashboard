@@ -1,5 +1,6 @@
-import { Bell, Search, User } from 'lucide-react'
-import { useState } from 'react'
+import { Bell, Search, User, Database, Wifi } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { isSupabaseConfigured } from '@/lib/supabase'
 
 interface HeaderProps {
   title: string
@@ -9,12 +10,30 @@ interface HeaderProps {
 
 export default function Header({ title, subtitle, pendingApprovals }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const liveMode = isSupabaseConfigured()
+
+  // ⌘K / Ctrl+K keyboard shortcut to open search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); setSearchOpen(true) }
+      if (e.key === 'Escape') setSearchOpen(false)
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [])
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 backdrop-blur-sm">
-      <div>
-        <h1 className="text-lg font-semibold text-white">{title}</h1>
-        {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+      <div className="flex items-center gap-3">
+        <div>
+          <h1 className="text-lg font-semibold text-white">{title}</h1>
+          {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+        </div>
+        {/* Data mode indicator */}
+        <div className={`ml-2 flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${liveMode ? 'bg-emerald-400/10 text-emerald-400' : 'bg-amber-400/10 text-amber-400'}`}>
+          {liveMode ? <Wifi className="h-3 w-3" /> : <Database className="h-3 w-3" />}
+          {liveMode ? 'Live' : 'Demo'}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

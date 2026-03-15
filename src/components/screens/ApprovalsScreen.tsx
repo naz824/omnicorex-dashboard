@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, X, Edit3, Mail, FileText, Rocket, Palette, DollarSign, GitBranch, Clock } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
@@ -17,6 +17,11 @@ export default function ApprovalsScreen() {
   const [filter, setFilter] = useState<ApprovalStatus | 'all'>('all')
   const [selectedApproval, setSelectedApproval] = useState<Approval | null>(null)
   const [reviewNotes, setReviewNotes] = useState('')
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedApproval(null) }
+    if (selectedApproval) { document.addEventListener('keydown', handleEsc); return () => document.removeEventListener('keydown', handleEsc) }
+  }, [selectedApproval])
 
   const pendingCount = approvals.filter(a => a.status === 'pending').length
   const filtered = filter === 'all' ? approvals : approvals.filter(a => a.status === filter)
