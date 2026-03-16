@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Lead, Project, ProjectTask, Booking, AgentConfig, Approval, Activity, RevenueMetric, DashboardStats } from '@/types'
 import { mockLeads, mockProjects, mockTasks, mockBookings, mockAgents, mockApprovals, mockActivities, mockRevenue, mockStats } from '@/data/mock'
 
@@ -12,6 +13,37 @@ export const supabase = supabaseUrl && supabaseAnonKey
 
 export const isSupabaseConfigured = (): boolean => {
   return supabase !== null
+}
+
+// ============================================================================
+// Export Supabase Client for Direct Use
+// ============================================================================
+
+export function getSupabaseClient(): SupabaseClient | null {
+  return supabase
+}
+
+// ============================================================================
+// Server-side Admin Functions Placeholder
+// ============================================================================
+
+export function getSupabaseAdmin(): SupabaseClient | null {
+  // This is a placeholder for server-side operations with admin privileges
+  // In a real application, this would use a service role key from the server
+  // and would not be exposed to the client
+  console.warn(
+    'getSupabaseAdmin() is a placeholder. Implement with service_role key on the server.'
+  )
+  return null
+}
+
+// ============================================================================
+// Real-time Channel Helpers
+// ============================================================================
+
+export function createRealtimeChannel(name: string) {
+  if (!supabase) return null
+  return supabase.channel(name)
 }
 
 // ============================================================================
