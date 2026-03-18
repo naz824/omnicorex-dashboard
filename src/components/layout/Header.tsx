@@ -10,6 +10,8 @@ interface HeaderProps {
 
 export default function Header({ title, subtitle, pendingApprovals }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const liveMode = isSupabaseConfigured()
 
   // ⌘K / Ctrl+K keyboard shortcut to open search
@@ -63,25 +65,60 @@ export default function Header({ title, subtitle, pendingApprovals }: HeaderProp
         )}
 
         {/* Notifications */}
-        <button
-          className="relative rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-          aria-label={`Notifications${pendingApprovals > 0 ? `, ${pendingApprovals} pending` : ''}`}
-        >
-          <Bell className="h-5 w-5" />
-          {pendingApprovals > 0 && (
-            <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
-              {pendingApprovals}
-            </span>
+        <div className="relative">
+          <button
+            onClick={() => setNotificationsOpen(!notificationsOpen)}
+            className="relative rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+            aria-label={`Notifications${pendingApprovals > 0 ? `, ${pendingApprovals} pending` : ''}`}
+          >
+            <Bell className="h-5 w-5" />
+            {pendingApprovals > 0 && (
+              <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+                {pendingApprovals}
+              </span>
+            )}
+          </button>
+          {notificationsOpen && (
+            <div className="absolute right-0 mt-2 w-80 rounded-lg border border-slate-700 bg-slate-800 p-4 shadow-lg z-40">
+              <h3 className="text-sm font-semibold text-white mb-3">Notifications</h3>
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {pendingApprovals > 0 ? (
+                  <>
+                    <div className="rounded-lg bg-slate-700/50 p-3">
+                      <p className="text-sm text-slate-200">{pendingApprovals} items awaiting your approval</p>
+                      <p className="text-xs text-slate-400 mt-1">Click to review them</p>
+                    </div>
+                    <div className="rounded-lg bg-slate-700/50 p-3">
+                      <p className="text-sm text-slate-200">New lead from website</p>
+                      <p className="text-xs text-slate-400 mt-1">5 minutes ago</p>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm text-slate-400 text-center py-4">No notifications</p>
+                )}
+              </div>
+            </div>
           )}
-        </button>
+        </div>
 
         {/* Profile */}
-        <button className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-800" aria-label="User menu">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500">
-            <User className="h-4 w-4 text-slate-950" />
-          </div>
-          <span className="hidden text-sm font-medium text-slate-300 md:inline">Nasir</span>
-        </button>
+        <div className="relative">
+          <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-800" aria-label="User menu">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500">
+              <User className="h-4 w-4 text-slate-950" />
+            </div>
+            <span className="hidden text-sm font-medium text-slate-300 md:inline">Nasir</span>
+          </button>
+          {userMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 rounded-lg border border-slate-700 bg-slate-800 p-2 shadow-lg z-40">
+              <button className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">View Profile</button>
+              <button className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Settings</button>
+              <button className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded">Help</button>
+              <div className="border-t border-slate-700 my-1" />
+              <button className="w-full text-left px-3 py-2 text-sm text-rose-400 hover:bg-slate-700 rounded">Logout</button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   )

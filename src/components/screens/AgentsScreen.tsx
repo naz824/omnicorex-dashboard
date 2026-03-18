@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Bot, Zap, Clock, CheckCircle2, Settings, Play, Pause } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
+import { useToast } from '@/components/ui/Toast'
 import { mockAgents, mockApprovals, mockActivities } from '@/data/mock'
 import { AGENT_STATUS_CONFIG } from '@/config/constants'
 import { formatRelativeTime } from '@/utils/format'
@@ -9,7 +10,9 @@ import { cn } from '@/utils/cn'
 import type { AgentConfig } from '@/types'
 
 export default function AgentsScreen() {
+  const { showToast } = useToast()
   const [selectedAgent, setSelectedAgent] = useState<AgentConfig | null>(null)
+  const [agentStatus, setAgentStatus] = useState<Record<string, boolean>>({})
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
 
   useEffect(() => {
@@ -190,17 +193,24 @@ export default function AgentsScreen() {
               </div>
 
               <div className="mt-6 flex gap-3">
-                <button className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-cyan-300">
+                <button onClick={() => showToast('Task assignment dialog opened', 'info')} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-cyan-300">
                   <Play className="h-4 w-4" />
                   Assign Task
                 </button>
-                <button className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600">
+                <button onClick={() => showToast('Agent config panel opened', 'info')} className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600">
                   <Settings className="h-4 w-4" />
                   Configure
                 </button>
-                <button className="flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-4 py-2.5 text-sm font-medium text-amber-400 hover:bg-amber-400/10">
-                  <Pause className="h-4 w-4" />
-                  Pause
+                <button
+                  onClick={() => {
+                    const newStatus = !agentStatus[selectedAgent.id]
+                    setAgentStatus(prev => ({ ...prev, [selectedAgent.id]: newStatus }))
+                    showToast(newStatus ? 'Agent paused' : 'Agent resumed', 'success')
+                  }}
+                  className="flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-400/5 px-4 py-2.5 text-sm font-medium text-amber-400 hover:bg-amber-400/10"
+                >
+                  {agentStatus[selectedAgent.id] ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+                  {agentStatus[selectedAgent.id] ? 'Resume' : 'Pause'}
                 </button>
               </div>
             </div>

@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Plus, Clock, User } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
+import Modal from '@/components/ui/Modal'
+import ProjectForm from '@/components/forms/ProjectForm'
+import { useToast } from '@/components/ui/Toast'
 import { mockProjects, mockTasks, mockApprovals } from '@/data/mock'
 import { PROJECT_STATUS_CONFIG, PRIORITY_CONFIG } from '@/config/constants'
 import { formatDate, formatCurrency } from '@/utils/format'
@@ -16,7 +19,9 @@ const TASK_COLUMNS: { id: TaskStatus; title: string }[] = [
 ]
 
 export default function ProjectsScreen() {
+  const { showToast } = useToast()
   const [selectedProject, setSelectedProject] = useState(mockProjects[0]?.id ?? '')
+  const [showAddModal, setShowAddModal] = useState(false)
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
 
   const project = mockProjects.find(p => p.id === selectedProject)
@@ -58,7 +63,7 @@ export default function ProjectsScreen() {
               </button>
             )
           })}
-          <button className="flex h-24 w-48 items-center justify-center rounded-xl border border-dashed border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300">
+          <button onClick={() => setShowAddModal(true)} className="flex h-24 w-48 items-center justify-center rounded-xl border border-dashed border-slate-700 text-slate-400 hover:border-slate-600 hover:text-slate-300">
             <Plus className="mr-2 h-4 w-4" />
             <span className="text-sm">New Project</span>
           </button>
@@ -100,7 +105,11 @@ export default function ProjectsScreen() {
                   {columnTasks.map((task) => {
                     const priorityConfig = PRIORITY_CONFIG[task.priority]
                     return (
-                      <div key={task.id} className="rounded-xl border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-slate-700">
+                      <button
+                        key={task.id}
+                        onClick={() => showToast(`Opened task: ${task.title}`, 'info')}
+                        className="w-full rounded-xl border border-slate-800 bg-slate-900 p-4 text-left transition-colors hover:border-slate-700"
+                      >
                         <div className="flex items-start justify-between gap-2">
                           <p className="text-sm font-medium text-white">{task.title}</p>
                           <StatusBadge label={priorityConfig?.label ?? ''} color={priorityConfig?.color ?? ''} bg={priorityConfig?.bg} />
@@ -126,7 +135,7 @@ export default function ProjectsScreen() {
                             />
                           </div>
                         )}
-                      </div>
+                      </button>
                     )
                   })}
                   {columnTasks.length === 0 && (
@@ -139,6 +148,17 @@ export default function ProjectsScreen() {
             )
           })}
         </div>
+
+        {/* Add Project Modal */}
+        <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Create New Project">
+          <ProjectForm
+            onSubmit={() => {
+              showToast('Project created successfully', 'success')
+              setShowAddModal(false)
+            }}
+            onClose={() => setShowAddModal(false)}
+          />
+        </Modal>
       </div>
     </div>
   )

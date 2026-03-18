@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import { Calendar, Clock, Video, Check, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, Video, Check, X, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
+import Modal from '@/components/ui/Modal'
+import BookingForm from '@/components/forms/BookingForm'
+import { useToast } from '@/components/ui/Toast'
 import { mockBookings, mockApprovals } from '@/data/mock'
 import { BOOKING_STATUS_CONFIG } from '@/config/constants'
 import { formatDate } from '@/utils/format'
@@ -12,8 +15,10 @@ const TIME_SLOTS = ['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
 
 export default function BookingsScreen() {
+  const { showToast } = useToast()
   const [view, setView] = useState<'list' | 'calendar'>('list')
   const [statusFilter, setStatusFilter] = useState<BookingStatus | 'all'>('all')
+  const [showAddModal, setShowAddModal] = useState(false)
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
 
   const filteredBookings = statusFilter === 'all'
@@ -41,9 +46,15 @@ export default function BookingsScreen() {
               </button>
             ))}
           </div>
-          <div className="flex rounded-lg border border-slate-700 bg-slate-800">
-            <button onClick={() => setView('list')} className={cn('px-3 py-1.5 text-sm', view === 'list' ? 'bg-cyan-400/10 text-cyan-400' : 'text-slate-400')}>List</button>
-            <button onClick={() => setView('calendar')} className={cn('px-3 py-1.5 text-sm', view === 'calendar' ? 'bg-cyan-400/10 text-cyan-400' : 'text-slate-400')}>Calendar</button>
+          <div className="flex items-center gap-3">
+            <div className="flex rounded-lg border border-slate-700 bg-slate-800">
+              <button onClick={() => setView('list')} className={cn('px-3 py-1.5 text-sm', view === 'list' ? 'bg-cyan-400/10 text-cyan-400' : 'text-slate-400')}>List</button>
+              <button onClick={() => setView('calendar')} className={cn('px-3 py-1.5 text-sm', view === 'calendar' ? 'bg-cyan-400/10 text-cyan-400' : 'text-slate-400')}>Calendar</button>
+            </div>
+            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-cyan-300">
+              <Plus className="h-4 w-4" />
+              New Booking
+            </button>
           </div>
         </div>
 
@@ -53,7 +64,7 @@ export default function BookingsScreen() {
             {filteredBookings.map((booking) => {
               const statusConfig = BOOKING_STATUS_CONFIG[booking.status]
               return (
-                <div key={booking.id} className="rounded-xl border border-slate-800 bg-slate-900 p-5 transition-colors hover:border-slate-700">
+                <button key={booking.id} onClick={() => showToast(`Opened booking: ${booking.name}`, 'info')} className="w-full rounded-xl border border-slate-800 bg-slate-900 p-5 text-left transition-colors hover:border-slate-700">
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
                       <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-lg bg-slate-800">
@@ -74,10 +85,10 @@ export default function BookingsScreen() {
                       <StatusBadge label={statusConfig?.label ?? ''} color={statusConfig?.color ?? ''} size="md" />
                       {booking.status === 'pending' && (
                         <div className="flex gap-2">
-                          <button className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 hover:bg-emerald-500/20" aria-label="Confirm booking">
+                          <button onClick={(e) => { e.stopPropagation(); showToast('Booking confirmed', 'success') }} className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 hover:bg-emerald-500/20" aria-label="Confirm booking">
                             <Check className="h-4 w-4" />
                           </button>
-                          <button className="rounded-lg bg-rose-500/10 p-2 text-rose-400 hover:bg-rose-500/20" aria-label="Cancel booking">
+                          <button onClick={(e) => { e.stopPropagation(); showToast('Booking cancelled', 'info') }} className="rounded-lg bg-rose-500/10 p-2 text-rose-400 hover:bg-rose-500/20" aria-label="Cancel booking">
                             <X className="h-4 w-4" />
                           </button>
                         </div>
@@ -95,7 +106,7 @@ export default function BookingsScreen() {
                     <span>{booking.phone}</span>
                     {booking.notes && <span>Note: {booking.notes}</span>}
                   </div>
-                </div>
+                </button>
               )
             })}
             {filteredBookings.length === 0 && (
@@ -111,11 +122,11 @@ export default function BookingsScreen() {
         {view === 'calendar' && (
           <div className="rounded-xl border border-slate-800 bg-slate-900">
             <div className="flex items-center justify-between border-b border-slate-800 px-5 py-3">
-              <button className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white" aria-label="Previous week">
+              <button onClick={() => showToast('Previous week', 'info')} className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white" aria-label="Previous week">
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <h3 className="text-sm font-semibold text-white">March 17 – 21, 2026</h3>
-              <button className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white" aria-label="Next week">
+              <button onClick={() => showToast('Next week', 'info')} className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white" aria-label="Next week">
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
@@ -157,6 +168,17 @@ export default function BookingsScreen() {
             </div>
           </div>
         )}
+
+        {/* Add Booking Modal */}
+        <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="New Booking">
+          <BookingForm
+            onSubmit={() => {
+              showToast('Booking created successfully', 'success')
+              setShowAddModal(false)
+            }}
+            onClose={() => setShowAddModal(false)}
+          />
+        </Modal>
       </div>
     </div>
   )

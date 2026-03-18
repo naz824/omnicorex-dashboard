@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import { Plus, Search, Filter, ChevronDown, Mail, Phone, Globe, MapPin, ArrowRight } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import StatusBadge from '@/components/shared/StatusBadge'
+import Modal from '@/components/ui/Modal'
+import LeadForm from '@/components/forms/LeadForm'
+import { useToast } from '@/components/ui/Toast'
 import { mockLeads, mockApprovals } from '@/data/mock'
 import { LEAD_STATUS_CONFIG } from '@/config/constants'
 import { formatRelativeTime } from '@/utils/format'
@@ -18,9 +21,11 @@ const PIPELINE_COLUMNS: { id: LeadStatus; title: string }[] = [
 ]
 
 export default function LeadsScreen() {
+  const { showToast } = useToast()
   const [view, setView] = useState<'pipeline' | 'table'>('pipeline')
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
 
   // Escape key closes drawer
@@ -92,7 +97,7 @@ export default function LeadsScreen() {
                 Table
               </button>
             </div>
-            <button className="flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-cyan-300">
+            <button onClick={() => setShowAddModal(true)} className="flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-cyan-300">
               <Plus className="h-4 w-4" />
               Add Lead
             </button>
@@ -221,9 +226,9 @@ export default function LeadsScreen() {
                 <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
                   <h3 className="mb-3 text-sm font-semibold text-white">Contact Info</h3>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-slate-300"><Mail className="h-4 w-4 text-slate-500" />{selectedLead.email}</div>
-                    <div className="flex items-center gap-2 text-sm text-slate-300"><Phone className="h-4 w-4 text-slate-500" />{selectedLead.phone}</div>
-                    {selectedLead.website_url && <div className="flex items-center gap-2 text-sm text-slate-300"><Globe className="h-4 w-4 text-slate-500" />{selectedLead.website_url}</div>}
+                    <a href={`mailto:${selectedLead.email}`} className="flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300"><Mail className="h-4 w-4 text-slate-500" />{selectedLead.email}</a>
+                    <a href={`tel:${selectedLead.phone}`} className="flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300"><Phone className="h-4 w-4 text-slate-500" />{selectedLead.phone}</a>
+                    {selectedLead.website_url && <a href={selectedLead.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300"><Globe className="h-4 w-4 text-slate-500" />{selectedLead.website_url}</a>}
                     <div className="flex items-center gap-2 text-sm text-slate-300"><MapPin className="h-4 w-4 text-slate-500" />{selectedLead.location}</div>
                   </div>
                 </div>
@@ -244,11 +249,11 @@ export default function LeadsScreen() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-cyan-300">
+                  <a href={`mailto:${selectedLead.email}?subject=Regarding ${selectedLead.business_name}`} className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-medium text-slate-950 hover:bg-cyan-300">
                     <Mail className="h-4 w-4" />
                     Draft Email
-                  </button>
-                  <button className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600">
+                  </a>
+                  <button onClick={() => showToast('Lead moved to next stage', 'success')} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-600">
                     <ArrowRight className="h-4 w-4" />
                     Move Stage
                   </button>
@@ -259,6 +264,17 @@ export default function LeadsScreen() {
             </div>
           </div>
         )}
+
+        {/* Add Lead Modal */}
+        <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Lead">
+          <LeadForm
+            onSubmit={() => {
+              showToast('Lead added successfully', 'success')
+              setShowAddModal(false)
+            }}
+            onClose={() => setShowAddModal(false)}
+          />
+        </Modal>
       </div>
     </div>
   )

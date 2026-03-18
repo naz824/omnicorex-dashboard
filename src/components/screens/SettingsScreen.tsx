@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Save, Database, CreditCard, Mail, Calendar, Globe, Bell, Shield, Key, ExternalLink, CheckCircle2, AlertCircle } from 'lucide-react'
 import Header from '@/components/layout/Header'
+import { useToast } from '@/components/ui/Toast'
 import { mockApprovals } from '@/data/mock'
 import { cn } from '@/utils/cn'
 
@@ -72,13 +73,30 @@ const DEFAULT_APPROVAL_RULES: Record<string, boolean> = {
 }
 
 export default function SettingsScreen() {
+  const { showToast } = useToast()
   const [activeTab, setActiveTab] = useState('general')
   const [notifs, setNotifs] = useState(DEFAULT_NOTIFICATIONS)
   const [rules, setRules] = useState(DEFAULT_APPROVAL_RULES)
+  const [businessInfo, setBusinessInfo] = useState({
+    name: 'OmnicoreX',
+    email: 'hello@omnicorex.com',
+    phone: '+1 (571) 444-9123',
+    website: 'https://omnicorex.com',
+    address: 'Northern Virginia',
+  })
   const pendingApprovals = mockApprovals.filter(a => a.status === 'pending').length
 
   const toggleNotif = (key: string) => setNotifs(prev => ({ ...prev, [key]: !prev[key] }))
   const toggleRule = (key: string) => setRules(prev => ({ ...prev, [key]: !prev[key] }))
+
+  const handleBusinessInfoChange = (field: string, value: string) => {
+    setBusinessInfo(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSaveBusinessInfo = () => {
+    localStorage.setItem('businessInfo', JSON.stringify(businessInfo))
+    showToast('Business information saved successfully', 'success')
+  }
 
   const supabaseConnected = getEnvStatus('VITE_SUPABASE_URL') && getEnvStatus('VITE_SUPABASE_ANON_KEY')
   const stripeConnected = getEnvStatus('VITE_STRIPE_PUBLISHABLE_KEY')
@@ -125,26 +143,56 @@ export default function SettingsScreen() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label htmlFor="business-name" className="text-sm text-slate-400">Business Name</label>
-                  <input id="business-name" type="text" defaultValue="OmnicoreX" className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                  <input
+                    id="business-name"
+                    type="text"
+                    value={businessInfo.name}
+                    onChange={(e) => handleBusinessInfoChange('name', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                  />
                 </div>
                 <div>
                   <label htmlFor="business-email" className="text-sm text-slate-400">Email</label>
-                  <input id="business-email" type="email" defaultValue="hello@omnicorex.com" className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                  <input
+                    id="business-email"
+                    type="email"
+                    value={businessInfo.email}
+                    onChange={(e) => handleBusinessInfoChange('email', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                  />
                 </div>
                 <div>
                   <label htmlFor="business-phone" className="text-sm text-slate-400">Phone</label>
-                  <input id="business-phone" type="tel" defaultValue="+1 (571) 444-9123" className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                  <input
+                    id="business-phone"
+                    type="tel"
+                    value={businessInfo.phone}
+                    onChange={(e) => handleBusinessInfoChange('phone', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                  />
                 </div>
                 <div>
                   <label htmlFor="business-website" className="text-sm text-slate-400">Website</label>
-                  <input id="business-website" type="url" defaultValue="https://omnicorex.com" className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                  <input
+                    id="business-website"
+                    type="url"
+                    value={businessInfo.website}
+                    onChange={(e) => handleBusinessInfoChange('website', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                  />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="business-address" className="text-sm text-slate-400">Address</label>
-                  <input id="business-address" type="text" defaultValue="Northern Virginia" className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none" />
+                  <input
+                    id="business-address"
+                    type="text"
+                    value={businessInfo.address}
+                    onChange={(e) => handleBusinessInfoChange('address', e.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white focus:border-cyan-400 focus:outline-none"
+                  />
                 </div>
               </div>
-              <button className="mt-4 flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-cyan-300">
+              <button onClick={handleSaveBusinessInfo} className="mt-4 flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-cyan-300">
                 <Save className="h-4 w-4" />
                 Save Changes
               </button>
@@ -157,7 +205,7 @@ export default function SettingsScreen() {
                 {['sales-agent.md', 'marketing-agent.md', 'design-agent.md', 'frontend-agent.md', 'backend-agent.md', 'qa-agent.md', 'operations-agent.md', 'orchestrator-agent.md'].map((file) => (
                   <div key={file} className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800 px-3 py-2">
                     <span className="text-sm text-slate-300">{file}</span>
-                    <button className="text-xs text-cyan-400 hover:text-cyan-300">
+                    <button onClick={() => showToast(`Opening ${file}`, 'info')} className="text-xs text-cyan-400 hover:text-cyan-300">
                       <ExternalLink className="h-3.5 w-3.5" />
                     </button>
                   </div>
