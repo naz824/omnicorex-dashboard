@@ -20,7 +20,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const taskId = randomUUID()
-      const startTime = Date.now()
 
       // Determine entity context
       let entityName = ''

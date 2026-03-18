@@ -10,7 +10,7 @@ export const corsHeaders = {
 
 export function cors(req: VercelRequest, res: VercelResponse): boolean {
   const origin = req.headers.origin || ''
-  const isAllowed = ALLOWED_ORIGINS.some((allowed) => origin.includes(allowed) || ALLOWED_ORIGINS.includes(origin))
+  const isAllowed = ALLOWED_ORIGINS.includes(origin)
 
   if (isAllowed) {
     res.setHeader('Access-Control-Allow-Origin', origin)

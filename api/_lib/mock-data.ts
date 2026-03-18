@@ -109,7 +109,7 @@ export interface RevenueMetric {
   pipeline_value: number
 }
 
-let leads: Lead[] = [
+const leads: Lead[] = [
   {
     id: '1', name: 'Maria Santos', email: 'maria@santosplumbing.com', phone: '(571) 555-0102',
     business_name: 'Santos Plumbing & HVAC', website_url: 'http://santosplumbing.com', industry: 'Plumbing/HVAC',
@@ -160,7 +160,7 @@ let leads: Lead[] = [
   },
 ]
 
-let projects: Project[] = [
+const projects: Project[] = [
   {
     id: '1', lead_id: '6', name: 'Kim Landscaping Website Redesign', client_name: 'David Kim',
     client_email: 'david@kimlandscaping.com', status: 'design', package_tier: 'growth',
@@ -177,13 +177,13 @@ let projects: Project[] = [
   },
 ]
 
-let bookings: Booking[] = [
+const bookings: Booking[] = [
   { id: '1', lead_id: '3', name: 'Sarah Thompson', email: 'sarah@thompsonlaw.com', phone: '(571) 555-0234', business_name: 'Thompson & Associates Law', website_url: 'http://thompsonlaw.com', goal: 'Modern website with client intake forms', preferred_date: '2026-03-17', preferred_time: '10:00 AM', status: 'confirmed', notes: 'Referred by Chen Dental', meeting_link: 'https://meet.google.com/abc-defg-hij', created_at: '2026-03-14T15:45:00Z', updated_at: '2026-03-15T08:00:00Z' },
   { id: '2', lead_id: null, name: 'Roberto Vasquez', email: 'roberto@vasquezhvac.com', phone: '(703) 555-0623', business_name: 'Vasquez HVAC Services', website_url: '', goal: 'Need a website to get more customers', preferred_date: '2026-03-18', preferred_time: '2:00 PM', status: 'pending', notes: '', meeting_link: null, created_at: '2026-03-15T12:00:00Z', updated_at: '2026-03-15T12:00:00Z' },
   { id: '3', lead_id: '5', name: 'Lisa Park', email: 'lisa@parkfitness.com', phone: '(571) 555-0489', business_name: 'Park Fitness Studio', website_url: 'http://parkfitness.com', goal: 'Class booking system and member portal', preferred_date: '2026-03-20', preferred_time: '11:00 AM', status: 'confirmed', notes: 'Follow-up call to discuss revised proposal', meeting_link: 'https://meet.google.com/xyz-abcd-efg', created_at: '2026-03-15T11:00:00Z', updated_at: '2026-03-15T11:30:00Z' },
 ]
 
-let agents: Agent[] = [
+const agents: Agent[] = [
   { id: 'apex', name: 'Orchestrator', code_name: 'Apex', role: 'Lead Coordinator', status: 'working', avatar_color: 'from-white to-slate-300', avatar_initials: 'AO', current_task: 'Coordinating Kim Landscaping design phase', tasks_completed_today: 8, tasks_completed_total: 247, approvals_pending: 0, last_active: '2026-03-15T21:30:00Z', model: 'sonnet', tools: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebSearch', 'WebFetch', 'Bash', 'Agent'] },
   { id: 'nova', name: 'Sales Agent', code_name: 'Nova', role: 'Senior Sales Strategist', status: 'waiting_approval', avatar_color: 'from-blue-400 to-blue-600', avatar_initials: 'NS', current_task: 'Drafting follow-up email for Park Fitness', tasks_completed_today: 5, tasks_completed_total: 189, approvals_pending: 2, last_active: '2026-03-15T21:15:00Z', model: 'sonnet', tools: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebSearch', 'WebFetch', 'Bash'] },
   { id: 'meridian', name: 'Marketing Agent', code_name: 'Meridian', role: 'Digital Marketing Strategist', status: 'working', avatar_color: 'from-emerald-400 to-emerald-600', avatar_initials: 'MK', current_task: 'Running SEO audit on Santos Plumbing competitor sites', tasks_completed_today: 3, tasks_completed_total: 156, approvals_pending: 0, last_active: '2026-03-15T21:20:00Z', model: 'sonnet', tools: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebSearch', 'WebFetch', 'Bash'] },
@@ -194,14 +194,14 @@ let agents: Agent[] = [
   { id: 'compass', name: 'Operations Agent', code_name: 'Compass', role: 'Senior Operations Manager', status: 'working', avatar_color: 'from-amber-400 to-amber-600', avatar_initials: 'CO', current_task: 'Preparing onboarding materials for Chen Dental', tasks_completed_today: 4, tasks_completed_total: 203, approvals_pending: 1, last_active: '2026-03-15T21:28:00Z', model: 'sonnet', tools: ['Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebSearch', 'WebFetch', 'Bash'] },
 ]
 
-let approvals: Approval[] = [
+const approvals: Approval[] = [
   { id: '1', agent_id: 'nova', agent_name: 'Nova', category: 'email', title: 'Follow-up email to Park Fitness', description: 'Day 3 check-in email with case study for fitness studios', content: 'Subject: Quick thought for Park Fitness Studio\n\nHi Lisa,\n\nI was thinking about our conversation and wanted to share how we helped FitZone Studio increase their class bookings by 40% with a custom booking system.\n\nWould love to walk you through the specific features that made the biggest difference for them.\n\nBest,\nNasir Chase\nOmnicoreX', status: 'pending', priority: 'p2', submitted_at: '2026-03-15T21:15:00Z', reviewed_at: null, reviewer_notes: '', metadata: { lead_id: '5', email_type: 'follow_up', sequence_day: 3 } },
   { id: '2', agent_id: 'nova', agent_name: 'Nova', category: 'proposal', title: 'Growth Package Proposal — Santos Plumbing', description: 'Customized proposal for Santos Plumbing & HVAC based on discovery call', content: '# Website Proposal: Santos Plumbing & HVAC\n\n## Recommended: Growth Package ($7,500)\n\n### What You Get:\n- Custom 8-page responsive website\n- Mobile-first design\n- Service area pages (Fairfax, Arlington, Alexandria)\n- Online appointment booking\n- Google Business Profile optimization\n- 90-day SEO foundation\n- 30-day money-back guarantee\n\n### Timeline: 6 weeks\n### Payment: 50% upfront, 50% on launch', status: 'pending', priority: 'p1', submitted_at: '2026-03-15T20:00:00Z', reviewed_at: null, reviewer_notes: '', metadata: { lead_id: '1', package_tier: 'growth', amount: 7500 } },
   { id: '3', agent_id: 'prism', agent_name: 'Prism', category: 'design', title: 'Kim Landscaping Homepage Wireframe', description: 'Low-fidelity wireframe for client review', content: 'Wireframe includes: Hero with portfolio slideshow, services grid, testimonials carousel, contact CTA, footer.', status: 'approved', priority: 'p2', submitted_at: '2026-03-14T15:00:00Z', reviewed_at: '2026-03-14T16:30:00Z', reviewer_notes: 'Looks great. Add a seasonal specials section.', metadata: { project_id: '1', phase: 'design' } },
   { id: '4', agent_id: 'compass', agent_name: 'Compass', category: 'email', title: 'Welcome email to Chen Dental Care', description: 'Client onboarding welcome email with next steps', content: 'Subject: Welcome to OmnicoreX — Here\'s What Happens Next\n\nDr. Chen,\n\nWelcome aboard! We\'re excited to transform Chen Dental Care\'s online presence.\n\nHere\'s your roadmap:\n1. Discovery call (Monday, March 16 at 10 AM)\n2. Brand asset collection (we\'ll send a questionnaire)\n3. Design phase begins (Week of March 23)\n\nQuestions? Reply to this email anytime.\n\nBest,\nNasir Chase\nOmnicoreX', status: 'pending', priority: 'p1', submitted_at: '2026-03-15T21:28:00Z', reviewed_at: null, reviewer_notes: '', metadata: { project_id: '2', email_type: 'onboarding' } },
 ]
 
-let activities: Activity[] = [
+const activities: Activity[] = [
   { id: '1', agent_name: 'Nova', action: 'Scored new lead', description: 'Sarah Thompson — Thompson & Associates Law — Score: 68/100', entity_type: 'lead', entity_id: '3', timestamp: '2026-03-15T21:30:00Z' },
   { id: '2', agent_name: 'Compass', action: 'Submitted for approval', description: 'Welcome email for Chen Dental Care onboarding', entity_type: 'approval', entity_id: '4', timestamp: '2026-03-15T21:28:00Z' },
   { id: '3', agent_name: 'Prism', action: 'Started task', description: 'Creating homepage mockup for Kim Landscaping', entity_type: 'project', entity_id: '1', timestamp: '2026-03-15T21:25:00Z' },
