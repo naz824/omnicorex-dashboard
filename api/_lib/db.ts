@@ -1,15 +1,12 @@
-import { Pool, type PoolClient } from 'pg'
-
-let pool: Pool | null = null
+let pool: unknown = null
 const dbConnected = Boolean(process.env.DATABASE_URL)
 
-export function getPool(): Pool {
+export async function getPool(): Promise<unknown> {
   if (!pool && process.env.DATABASE_URL) {
+    const { Pool } = await import('pg')
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      ssl: { rejectUnauthorized: false },
     })
   }
   if (!pool) {
@@ -23,7 +20,8 @@ export async function query<T = unknown>(text: string, params?: unknown[]): Prom
     throw new Error('Database not connected. DATABASE_URL not set.')
   }
 
-  const client = await getPool().connect()
+  const p = await getPool() as { connect: () => Promise<{ query: (t: string, p?: unknown[]) => Promise<{ rows: T[] }>; release: () => void }> }
+  const client = await p.connect()
   try {
     const result = await client.query(text, params)
     return result.rows as T[]
@@ -43,7 +41,8 @@ export function isDbConnected(): boolean {
 
 export async function closePool(): Promise<void> {
   if (pool) {
-    await pool.end()
+    const p = pool as { end: () => Promise<void> }
+    await p.end()
     pool = null
   }
 }
