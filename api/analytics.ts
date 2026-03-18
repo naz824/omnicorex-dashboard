@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { cors } from './_lib/cors'
-import { getDashboardStats, getRevenue, getLeads, getProjects } from './_lib/mock-data'
+import { cors } from './_lib/cors.js'
+import { getDashboardStats, getRevenue, getLeads, getProjects } from './_lib/mock-data.js'
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return

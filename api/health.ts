@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { cors } from './_lib/cors'
-import { isDbConnected } from './_lib/db'
+import { cors } from './_lib/cors.js'
+import { isDbConnected } from './_lib/db.js'
 
 const startTime = Date.now()
 

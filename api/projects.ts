@@ -1,12 +1,24 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { cors } from './_lib/cors'
-import { getProjects, createProject } from './_lib/mock-data'
+import { cors } from './_lib/cors.js'
+import { getProjects, getProject, createProject, updateProject, deleteProject } from './_lib/mock-data.js'
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
   try {
+    const id = req.query.id as string | undefined
+
     if (req.method === 'GET') {
+      // Single project by ID
+      if (id) {
+        const project = getProject(id)
+        if (!project) {
+          return res.status(404).json({ error: 'Project not found' })
+        }
+        return res.status(200).json(project)
+      }
+
+      // List projects
       const status = req.query.status as string | undefined
       let projects = getProjects()
 
@@ -41,6 +53,30 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       })
 
       return res.status(201).json(project)
+    }
+
+    if (req.method === 'PUT') {
+      if (!id) {
+        return res.status(400).json({ error: 'Missing project ID' })
+      }
+
+      const project = updateProject(id, req.body)
+      if (!project) {
+        return res.status(404).json({ error: 'Project not found' })
+      }
+      return res.status(200).json(project)
+    }
+
+    if (req.method === 'DELETE') {
+      if (!id) {
+        return res.status(400).json({ error: 'Missing project ID' })
+      }
+
+      const deleted = deleteProject(id)
+      if (!deleted) {
+        return res.status(404).json({ error: 'Project not found' })
+      }
+      return res.status(204).end()
     }
 
     return res.status(405).json({ error: 'Method not allowed' })

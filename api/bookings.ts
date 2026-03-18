@@ -1,12 +1,24 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { cors } from './_lib/cors'
-import { getBookings, createBooking } from './_lib/mock-data'
+import { cors } from './_lib/cors.js'
+import { getBookings, getBooking, createBooking, updateBooking, deleteBooking } from './_lib/mock-data.js'
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (cors(req, res)) return
 
   try {
+    const id = req.query.id as string | undefined
+
     if (req.method === 'GET') {
+      // Single booking by ID
+      if (id) {
+        const booking = getBooking(id)
+        if (!booking) {
+          return res.status(404).json({ error: 'Booking not found' })
+        }
+        return res.status(200).json(booking)
+      }
+
+      // List bookings
       const status = req.query.status as string | undefined
       let bookings = getBookings()
 
@@ -40,6 +52,30 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       })
 
       return res.status(201).json(booking)
+    }
+
+    if (req.method === 'PUT') {
+      if (!id) {
+        return res.status(400).json({ error: 'Missing booking ID' })
+      }
+
+      const booking = updateBooking(id, req.body)
+      if (!booking) {
+        return res.status(404).json({ error: 'Booking not found' })
+      }
+      return res.status(200).json(booking)
+    }
+
+    if (req.method === 'DELETE') {
+      if (!id) {
+        return res.status(400).json({ error: 'Missing booking ID' })
+      }
+
+      const deleted = deleteBooking(id)
+      if (!deleted) {
+        return res.status(404).json({ error: 'Booking not found' })
+      }
+      return res.status(204).end()
     }
 
     return res.status(405).json({ error: 'Method not allowed' })

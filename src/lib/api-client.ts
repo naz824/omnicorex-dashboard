@@ -97,7 +97,7 @@ export const fetchLeads = async (status?: string): Promise<Lead[]> => {
 };
 
 export const fetchLead = async (id: string): Promise<Lead> => {
-  return apiFetch<Lead>(`/leads/${id}`);
+  return apiFetch<Lead>(`/leads?id=${id}`);
 };
 
 export const createLead = async (data: Partial<Lead>): Promise<Lead> => {
@@ -108,14 +108,14 @@ export const createLead = async (data: Partial<Lead>): Promise<Lead> => {
 };
 
 export const updateLead = async (id: string, data: Partial<Lead>): Promise<Lead> => {
-  return apiFetch<Lead>(`/leads/${id}`, {
+  return apiFetch<Lead>(`/leads?id=${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
 };
 
 export const deleteLead = async (id: string): Promise<void> => {
-  await apiFetch(`/leads/${id}`, {
+  await apiFetch(`/leads?id=${id}`, {
     method: 'DELETE',
   });
 };
@@ -143,7 +143,7 @@ export const fetchProjects = async (status?: string): Promise<Project[]> => {
 };
 
 export const fetchProject = async (id: string): Promise<Project> => {
-  return apiFetch<Project>(`/projects/${id}`);
+  return apiFetch<Project>(`/projects?id=${id}`);
 };
 
 export const createProject = async (data: Partial<Project>): Promise<Project> => {
@@ -154,7 +154,7 @@ export const createProject = async (data: Partial<Project>): Promise<Project> =>
 };
 
 export const updateProject = async (id: string, data: Partial<Project>): Promise<Project> => {
-  return apiFetch<Project>(`/projects/${id}`, {
+  return apiFetch<Project>(`/projects?id=${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -182,7 +182,7 @@ export const fetchBookings = async (status?: string): Promise<Booking[]> => {
 };
 
 export const fetchBooking = async (id: string): Promise<Booking> => {
-  return apiFetch<Booking>(`/bookings/${id}`);
+  return apiFetch<Booking>(`/bookings?id=${id}`);
 };
 
 export const createBooking = async (data: Partial<Booking>): Promise<Booking> => {
@@ -193,7 +193,7 @@ export const createBooking = async (data: Partial<Booking>): Promise<Booking> =>
 };
 
 export const updateBooking = async (id: string, data: Partial<Booking>): Promise<Booking> => {
-  return apiFetch<Booking>(`/bookings/${id}`, {
+  return apiFetch<Booking>(`/bookings?id=${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -218,11 +218,11 @@ export const fetchAgents = async (): Promise<Agent[]> => {
 };
 
 export const fetchAgent = async (id: string): Promise<Agent> => {
-  return apiFetch<Agent>(`/agents/${id}`);
+  return apiFetch<Agent>(`/agents?id=${id}`);
 };
 
 export const updateAgent = async (id: string, data: Partial<Agent>): Promise<Agent> => {
-  return apiFetch<Agent>(`/agents/${id}`, {
+  return apiFetch<Agent>(`/agents?id=${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -233,7 +233,7 @@ export const executeAgentAction = async (
   action: string,
   payload: unknown
 ): Promise<unknown> => {
-  return apiFetch(`/agents/${id}/action`, {
+  return apiFetch(`/agents?id=${id}`, {
     method: 'POST',
     body: JSON.stringify({ action, payload }),
   });
@@ -261,23 +261,23 @@ export const fetchApprovals = async (status?: string): Promise<Approval[]> => {
 };
 
 export const approveItem = async (id: string): Promise<Approval> => {
-  return apiFetch<Approval>(`/approvals/${id}/approve`, {
-    method: 'POST',
-    body: JSON.stringify({}),
+  return apiFetch<Approval>(`/approvals?id=${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ action: 'approve' }),
   });
 };
 
 export const rejectItem = async (id: string, reason: string): Promise<Approval> => {
-  return apiFetch<Approval>(`/approvals/${id}/reject`, {
-    method: 'POST',
-    body: JSON.stringify({ reason }),
+  return apiFetch<Approval>(`/approvals?id=${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ action: 'reject', reviewer_notes: reason }),
   });
 };
 
 export const requestRevision = async (id: string, notes: string): Promise<Approval> => {
-  return apiFetch<Approval>(`/approvals/${id}/revision`, {
-    method: 'POST',
-    body: JSON.stringify({ notes }),
+  return apiFetch<Approval>(`/approvals?id=${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ action: 'request_revision', reviewer_notes: notes }),
   });
 };
 
@@ -342,7 +342,7 @@ export interface AuthResponse {
 }
 
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
-  const response = await apiFetch<AuthResponse>('/auth/login', {
+  const response = await apiFetch<AuthResponse>('/auth?action=login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
@@ -353,7 +353,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 };
 
 export const signup = async (email: string, password: string, name: string): Promise<AuthResponse> => {
-  const response = await apiFetch<AuthResponse>('/auth/signup', {
+  const response = await apiFetch<AuthResponse>('/auth?action=signup', {
     method: 'POST',
     body: JSON.stringify({ email, password, name }),
   });
@@ -368,7 +368,7 @@ export const getCurrentUser = async (token?: string): Promise<User> => {
   if (!authToken) {
     throw createApiError('No authentication token found');
   }
-  return apiFetch<User>('/auth/me', {
+  return apiFetch<User>('/auth?action=me', {
     headers: {
       'Authorization': `Bearer ${authToken}`,
     },

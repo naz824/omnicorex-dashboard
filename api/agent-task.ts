@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { cors } from './_lib/cors'
-import { getAgent, createActivity, getLead, getProject } from './_lib/mock-data'
+import { cors } from './_lib/cors.js'
+import { getAgent, createActivity, getLead, getProject } from './_lib/mock-data.js'
 import { randomUUID } from 'node:crypto'
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
