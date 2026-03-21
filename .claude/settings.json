@@ -1,0 +1,92 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git log *)",
+      "Bash(git diff *)",
+      "Bash(git status)",
+      "Bash(git branch *)",
+      "Bash(curl *)",
+      "Bash(python3 *)",
+      "Bash(node *)",
+      "Bash(ls *)",
+      "Bash(pwd)",
+      "Bash(find *)",
+      "Edit",
+      "Write",
+      "Agent",
+      "mcp__github__*",
+      "mcp__browser__*",
+      "mcp__filesystem__*",
+      "mcp__fetch__*",
+      "mcp__postgres__*",
+      "mcp__memory__*",
+      "mcp__sequential-thinking__*",
+      "mcp__brave-search__*"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(git rebase -i *)",
+      "Bash(sudo *)",
+      "Edit(.env)",
+      "Edit(.env.local)",
+      "Edit(.env.production)",
+      "Write(.env)",
+      "Write(.env.local)",
+      "Write(.env.production)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(git rebase *)",
+      "Bash(rm *)",
+      "Edit",
+      "Write",
+      "mcp__email__send_email",
+      "mcp__stripe__create_charge",
+      "mcp__stripe__create_invoice"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/post-edit.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/on-stop.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "autoMemoryEnabled": true,
+  "memoryConfig": {
+    "maxSize": 50000,
+    "categories": [
+      "market-insights",
+      "client-preferences",
+      "successful-templates",
+      "common-objections",
+      "design-patterns",
+      "competitive-analysis"
+    ]
+  }
+}

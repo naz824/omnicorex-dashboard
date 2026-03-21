@@ -1,0 +1,173 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "@github_token"
+      },
+      "description": "GitHub repository management, PR reviews, issue tracking"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/sessions/lucid-zen-brahmagupta/omnicorex-dashboard"
+      ],
+      "description": "Local file system access and manipulation"
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "description": "HTTP/HTTPS requests, API calls, web scraping"
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "description": "Persistent key-value store for cross-session memory"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "description": "Extended thinking for complex problem decomposition"
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_SEARCH_API_KEY": "@brave_search_key"
+      },
+      "description": "Web search for lead research and market analysis"
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "env": {
+        "DATABASE_URL": "@database_url"
+      },
+      "description": "PostgreSQL database access (Supabase)"
+    }
+  },
+  "environmentVariables": {
+    "@github_token": "GITHUB_PERSONAL_ACCESS_TOKEN",
+    "@brave_search_key": "BRAVE_SEARCH_API_KEY",
+    "@database_url": "DATABASE_URL"
+  },
+  "toolOverrides": {
+    "description": "Agent-specific tool configurations",
+    "agents": {
+      "apex": {
+        "allowedTools": [
+          "Agent",
+          "Read",
+          "Glob",
+          "Grep",
+          "Bash",
+          "mcp__github__*",
+          "mcp__filesystem__*",
+          "mcp__fetch__*",
+          "mcp__brave-search__*",
+          "mcp__memory__*",
+          "mcp__sequential-thinking__*"
+        ]
+      },
+      "nova": {
+        "allowedTools": [
+          "Read",
+          "Grep",
+          "Bash",
+          "mcp__browser__*",
+          "mcp__fetch__*",
+          "mcp__brave-search__*",
+          "mcp__memory__*"
+        ]
+      },
+      "meridian": {
+        "allowedTools": [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "mcp__browser__*",
+          "mcp__fetch__*",
+          "mcp__brave-search__*"
+        ]
+      },
+      "prism": {
+        "allowedTools": [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "Glob",
+          "Grep"
+        ]
+      },
+      "vertex": {
+        "allowedTools": [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "Glob",
+          "Grep",
+          "mcp__github__*"
+        ]
+      },
+      "nexus": {
+        "allowedTools": [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "Glob",
+          "Grep",
+          "mcp__github__*",
+          "mcp__postgres__*"
+        ]
+      },
+      "sentinel": {
+        "allowedTools": [
+          "Read",
+          "Glob",
+          "Grep",
+          "Bash",
+          "mcp__browser__*"
+        ],
+        "deniedTools": [
+          "Write",
+          "Edit"
+        ]
+      },
+      "compass": {
+        "allowedTools": [
+          "Read",
+          "Write",
+          "Edit",
+          "Bash",
+          "mcp__fetch__*",
+          "mcp__browser__*"
+        ]
+      }
+    }
+  }
+}
