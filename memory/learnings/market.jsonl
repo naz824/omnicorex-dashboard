@@ -1,0 +1,2 @@
+{"id":"market_001","timestamp":"2026-03-20T22:00:00Z","category":"market","insight":"Virginia local businesses priority: professional services, healthcare, high-value restaurants","source":"business_rules","confidence":1.0,"tags":["virginia","target_market","priority"]}
+{"id":"market_002","timestamp":"2026-03-20T22:00:00Z","category":"market","insight":"Budget minimum $1,500 for Starter package. Below this threshold, disqualify the lead","source":"pricing_rules","confidence":1.0,"tags":["pricing","qualification","minimum"]}

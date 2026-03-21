@@ -1,0 +1,34 @@
+{
+  "actions": [
+    {
+      "id": "action_001",
+      "priority": "high",
+      "type": "infrastructure",
+      "description": "Connect Neon PostgreSQL database via Vercel Storage",
+      "assigned_to": "nexus",
+      "status": "blocked",
+      "blocker": "User needs to accept Neon integration in Vercel dashboard",
+      "created": "2026-03-20T22:00:00Z"
+    },
+    {
+      "id": "action_002",
+      "priority": "high",
+      "type": "client_work",
+      "description": "Onboard two new clients for website builds",
+      "assigned_to": "nova",
+      "status": "pending",
+      "blocker": "Awaiting client details from Nasir",
+      "created": "2026-03-20T22:00:00Z"
+    },
+    {
+      "id": "action_003",
+      "priority": "medium",
+      "type": "infrastructure",
+      "description": "Set up Stripe payment integration",
+      "assigned_to": "nexus",
+      "status": "pending",
+      "created": "2026-03-20T22:00:00Z"
+    }
+  ],
+  "last_updated": "2026-03-20T22:00:00Z"
+}

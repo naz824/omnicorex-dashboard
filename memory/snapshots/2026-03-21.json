@@ -1,0 +1,249 @@
+{
+  "timestamp": "2026-03-21T02:53:35.765Z",
+  "memory": {
+    "clients": [
+      {
+        "id": "learn_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "client",
+        "insight": "Nasir has two new clients who need website and digital presence improvement",
+        "source": "user_conversation",
+        "confidence": 0.9,
+        "tags": [
+          "prospect",
+          "website",
+          "pending"
+        ]
+      }
+    ],
+    "competitive": [
+      {
+        "id": "comp_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "competitive",
+        "insight": "Local web agencies in Virginia charge $3,000-$15,000 for similar services. OmnicoreX undercuts at Starter but matches at Premium with more automation",
+        "source": "market_research",
+        "confidence": 0.7,
+        "tags": [
+          "pricing",
+          "virginia",
+          "agencies"
+        ]
+      }
+    ],
+    "market": [
+      {
+        "id": "market_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "market",
+        "insight": "Virginia local businesses priority: professional services, healthcare, high-value restaurants",
+        "source": "business_rules",
+        "confidence": 1,
+        "tags": [
+          "virginia",
+          "target_market",
+          "priority"
+        ]
+      },
+      {
+        "id": "market_002",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "market",
+        "insight": "Budget minimum $1,500 for Starter package. Below this threshold, disqualify the lead",
+        "source": "pricing_rules",
+        "confidence": 1,
+        "tags": [
+          "pricing",
+          "qualification",
+          "minimum"
+        ]
+      }
+    ],
+    "objections": [
+      {
+        "id": "obj_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "objection",
+        "objection": "Already has a website",
+        "rebuttal": "We audit existing sites for performance, SEO, and mobile optimization gaps that cost leads",
+        "source": "sales_playbook",
+        "confidence": 0.8,
+        "tags": [
+          "existing_site",
+          "audit",
+          "upsell"
+        ]
+      }
+    ],
+    "patterns": [
+      {
+        "id": "pat_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "pattern",
+        "type": "code",
+        "insight": "Dynamic import('pg') prevents Vercel build failures when pg is not installed",
+        "source": "debugging",
+        "confidence": 1,
+        "tags": [
+          "vercel",
+          "postgresql",
+          "dynamic_import"
+        ]
+      },
+      {
+        "id": "pat_002",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "pattern",
+        "type": "code",
+        "insight": "erasableSyntaxOnly requires explicit property declarations instead of constructor parameter properties",
+        "source": "debugging",
+        "confidence": 1,
+        "tags": [
+          "typescript",
+          "strict",
+          "constructor"
+        ]
+      },
+      {
+        "id": "pat_003",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "pattern",
+        "type": "deployment",
+        "insight": "Vercel Hobby plan max 12 functions. Consolidate endpoints using query params (?id=, ?action=) instead of path segments",
+        "source": "debugging",
+        "confidence": 1,
+        "tags": [
+          "vercel",
+          "hobby",
+          "consolidation"
+        ]
+      },
+      {
+        "id": "mem_ec3de924",
+        "timestamp": "2026-03-21T02:53:32.286Z",
+        "insight": "Claude Code memory system uses multi-layer persistence: MEMORY.md hot memory, JSONL learnings, GitHub sync, and MCP memory servers",
+        "category": "pattern",
+        "type": "infrastructure",
+        "confidence": 1,
+        "tags": [
+          "memory",
+          "persistence",
+          "claude-code"
+        ]
+      }
+    ],
+    "templates": [
+      {
+        "id": "tmpl_001",
+        "timestamp": "2026-03-20T22:00:00Z",
+        "category": "template",
+        "type": "pricing",
+        "content": "Starter $1,500 | Growth $5,000 | Premium $12,000",
+        "source": "business_rules",
+        "confidence": 1,
+        "tags": [
+          "pricing",
+          "packages"
+        ]
+      }
+    ]
+  },
+  "entities": {
+    "companies": [
+      {
+        "id": "company_001",
+        "name": "OmnicoreX",
+        "type": "ai_agency",
+        "industry": "digital_services",
+        "location": "Virginia, USA",
+        "website": "https://omnicorex-dashboard.vercel.app",
+        "github": "https://github.com/naz824/omnicorex-dashboard",
+        "status": "building",
+        "created": "2026-03-20T22:00:00Z"
+      }
+    ],
+    "people": [
+      {
+        "id": "person_001",
+        "name": "Nasir Chase",
+        "role": "founder",
+        "email": "idris.nm.chase@gmail.com",
+        "github": "naz824",
+        "location": "Virginia, USA",
+        "notes": "Sole human operator of OmnicoreX. Approves all client-facing and financial decisions.",
+        "created": "2026-03-20T22:00:00Z",
+        "updated": "2026-03-20T22:00:00Z"
+      }
+    ],
+    "relationships": [
+      {
+        "id": "rel_001",
+        "from": "person_001",
+        "to": "company_001",
+        "type": "founder_of",
+        "since": "2026-03-01",
+        "notes": "Sole founder and human operator",
+        "created": "2026-03-20T22:00:00Z"
+      }
+    ]
+  },
+  "context": {
+    "active-projects": {
+      "projects": [],
+      "last_updated": "2026-03-20T22:00:00Z",
+      "note": "No active client projects yet. Infrastructure build in progress."
+    },
+    "pending-actions": {
+      "actions": [
+        {
+          "id": "action_001",
+          "priority": "high",
+          "type": "infrastructure",
+          "description": "Connect Neon PostgreSQL database via Vercel Storage",
+          "assigned_to": "nexus",
+          "status": "blocked",
+          "blocker": "User needs to accept Neon integration in Vercel dashboard",
+          "created": "2026-03-20T22:00:00Z"
+        },
+        {
+          "id": "action_002",
+          "priority": "high",
+          "type": "client_work",
+          "description": "Onboard two new clients for website builds",
+          "assigned_to": "nova",
+          "status": "pending",
+          "blocker": "Awaiting client details from Nasir",
+          "created": "2026-03-20T22:00:00Z"
+        },
+        {
+          "id": "action_003",
+          "priority": "medium",
+          "type": "infrastructure",
+          "description": "Set up Stripe payment integration",
+          "assigned_to": "nexus",
+          "status": "pending",
+          "created": "2026-03-20T22:00:00Z"
+        }
+      ],
+      "last_updated": "2026-03-20T22:00:00Z"
+    },
+    "pipeline": {
+      "pipeline": {
+        "new_leads": [],
+        "qualifying": [],
+        "proposal_sent": [],
+        "negotiating": [],
+        "closed_won": [],
+        "closed_lost": []
+      },
+      "metrics": {
+        "total_leads": 0,
+        "qualified_leads": 0,
+        "proposals_sent": 0,
+        "win_rate": 0,
+        "avg_deal_size": 0
+      },
+      "last_updated": "2026-03-20T22:00:00Z"
+    }
+  }
+}

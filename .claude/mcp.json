@@ -16,7 +16,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/sessions/lucid-zen-brahmagupta/omnicorex-dashboard"
+        "."
       ],
       "description": "Local file system access and manipulation"
     },
@@ -34,7 +34,22 @@
         "-y",
         "@modelcontextprotocol/server-memory"
       ],
-      "description": "Persistent key-value store for cross-session memory"
+      "env": {
+        "MEMORY_FILE_PATH": "./memory/.mcp-memory-store.json"
+      },
+      "description": "Official MCP knowledge graph memory — entities, relations, observations persisted to memory/.mcp-memory-store.json and committed to GitHub"
+    },
+    "memory-service": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-memory-service"
+      ],
+      "env": {
+        "MCP_MEMORY_STORAGE_PATH": "./memory/.memory-service-db",
+        "MCP_MEMORY_BACKEND": "sqlite-vec"
+      },
+      "description": "Advanced semantic memory with embeddings, knowledge graph, and auto-consolidation (doobidoo/mcp-memory-service)"
     },
     "sequential-thinking": {
       "command": "npx",
@@ -64,7 +79,7 @@
       "env": {
         "DATABASE_URL": "@database_url"
       },
-      "description": "PostgreSQL database access (Supabase)"
+      "description": "PostgreSQL database access (when DATABASE_URL is configured)"
     }
   },
   "environmentVariables": {
@@ -87,6 +102,7 @@
           "mcp__fetch__*",
           "mcp__brave-search__*",
           "mcp__memory__*",
+          "mcp__memory-service__*",
           "mcp__sequential-thinking__*"
         ]
       },
@@ -98,7 +114,8 @@
           "mcp__browser__*",
           "mcp__fetch__*",
           "mcp__brave-search__*",
-          "mcp__memory__*"
+          "mcp__memory__*",
+          "mcp__memory-service__*"
         ]
       },
       "meridian": {
@@ -109,7 +126,8 @@
           "Bash",
           "mcp__browser__*",
           "mcp__fetch__*",
-          "mcp__brave-search__*"
+          "mcp__brave-search__*",
+          "mcp__memory__*"
         ]
       },
       "prism": {
@@ -119,7 +137,8 @@
           "Edit",
           "Bash",
           "Glob",
-          "Grep"
+          "Grep",
+          "mcp__memory__*"
         ]
       },
       "vertex": {
@@ -130,7 +149,8 @@
           "Bash",
           "Glob",
           "Grep",
-          "mcp__github__*"
+          "mcp__github__*",
+          "mcp__memory__*"
         ]
       },
       "nexus": {
@@ -142,7 +162,8 @@
           "Glob",
           "Grep",
           "mcp__github__*",
-          "mcp__postgres__*"
+          "mcp__postgres__*",
+          "mcp__memory__*"
         ]
       },
       "sentinel": {
@@ -151,7 +172,8 @@
           "Glob",
           "Grep",
           "Bash",
-          "mcp__browser__*"
+          "mcp__browser__*",
+          "mcp__memory__*"
         ],
         "deniedTools": [
           "Write",
@@ -165,7 +187,8 @@
           "Edit",
           "Bash",
           "mcp__fetch__*",
-          "mcp__browser__*"
+          "mcp__browser__*",
+          "mcp__memory__*"
         ]
       }
     }

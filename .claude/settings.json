@@ -6,16 +6,24 @@
       "Grep",
       "Bash(npm *)",
       "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(python3 *)",
       "Bash(git log *)",
       "Bash(git diff *)",
       "Bash(git status)",
       "Bash(git branch *)",
+      "Bash(git add *)",
       "Bash(curl *)",
-      "Bash(python3 *)",
-      "Bash(node *)",
       "Bash(ls *)",
       "Bash(pwd)",
       "Bash(find *)",
+      "Bash(cat *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(mkdir *)",
+      "Bash(chmod *)",
+      "Bash(./scripts/*)",
       "Edit",
       "Write",
       "Agent",
@@ -25,6 +33,7 @@
       "mcp__fetch__*",
       "mcp__postgres__*",
       "mcp__memory__*",
+      "mcp__memory-service__*",
       "mcp__sequential-thinking__*",
       "mcp__brave-search__*"
     ],
@@ -46,14 +55,23 @@
       "Bash(git commit *)",
       "Bash(git rebase *)",
       "Bash(rm *)",
-      "Edit",
-      "Write",
       "mcp__email__send_email",
       "mcp__stripe__create_charge",
       "mcp__stripe__create_invoice"
     ]
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ ! -f .claude/.session_loaded ] && [ -f scripts/memory-load.sh ]; then bash scripts/memory-load.sh > .claude/.session_context 2>&1; touch .claude/.session_loaded; fi'"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -71,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/on-stop.sh"
+            "command": "bash -c 'cd \"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\" && bash scripts/memory-extract.sh 2>/dev/null; bash scripts/memory-sync.sh 2>/dev/null; bash .claude/hooks/on-stop.sh 2>/dev/null'"
           }
         ]
       }
@@ -86,7 +104,17 @@
       "successful-templates",
       "common-objections",
       "design-patterns",
-      "competitive-analysis"
-    ]
+      "competitive-analysis",
+      "session-context",
+      "code-patterns",
+      "deployment-learnings"
+    ],
+    "persistence": {
+      "backend": "github",
+      "memoryDir": "memory/",
+      "autoCommit": true,
+      "syncOnStop": true,
+      "snapshotInterval": "daily"
+    }
   }
 }

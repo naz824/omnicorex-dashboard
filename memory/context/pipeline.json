@@ -1,0 +1,18 @@
+{
+  "pipeline": {
+    "new_leads": [],
+    "qualifying": [],
+    "proposal_sent": [],
+    "negotiating": [],
+    "closed_won": [],
+    "closed_lost": []
+  },
+  "metrics": {
+    "total_leads": 0,
+    "qualified_leads": 0,
+    "proposals_sent": 0,
+    "win_rate": 0,
+    "avg_deal_size": 0
+  },
+  "last_updated": "2026-03-20T22:00:00Z"
+}

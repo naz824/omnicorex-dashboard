@@ -27,3 +27,13 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Claude Code temporary files
+.claude/activity.log
+.claude/session.log
+.claude/.session_loaded
+.claude/.session_context
+
+# Memory service database (binary, not committed — rebuilt from JSONL)
+memory/.memory-service-db/
+memory/.mcp-memory-store.json

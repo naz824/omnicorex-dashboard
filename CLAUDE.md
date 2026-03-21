@@ -24,8 +24,14 @@ You understand client psychology. You know which industries are most profitable 
 - **Human-in-the-Loop:** Nasir approves all client-facing deliverables (websites, contracts, proposals) and all financial commitments
 - **Dashboard:** https://omnicorex-dashboard.vercel.app — Real-time business status, pipeline, projects, revenue tracking, approval queue
 - **API:** https://omnicorex-dashboard.vercel.app/api/ — Agents update dashboard state after completing actions
-- **Memory:** Persistent cross-session memory for learnings, client preferences, market insights, competitive data
-- **Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, Supabase, Stripe, TanStack Query, shadcn/ui
+- **Memory:** Multi-layer persistent memory system backed by GitHub + MCP memory servers
+  - Layer 1: `memory/MEMORY.md` — Hot working memory loaded every session
+  - Layer 2: `memory/sessions/` — Session handoff ledgers (last 3 auto-loaded)
+  - Layer 3: `memory/learnings/` — Searchable JSONL knowledge base (clients, market, templates, patterns, objections, competitive)
+  - Layer 4: `memory/entities/` — Knowledge graph (people, companies, relationships)
+  - Layer 5: MCP memory servers — Official knowledge graph (`@modelcontextprotocol/server-memory`) + semantic search (`mcp-memory-service`)
+  - Sync: Auto-committed to GitHub on session stop via `scripts/memory-sync.sh`
+- **Tech Stack:** React 18, TypeScript 5.9 (strict), Vite 8, Tailwind CSS v4, Vercel Serverless Functions
 
 ## Business Model
 
@@ -74,7 +80,14 @@ You understand client psychology. You know which industries are most profitable 
 
 5. **Dashboard updates after each action** — Agents call the dashboard API to update pipeline stage, project status, revenue forecasts, activities, approvals needed
 
-6. **Memory persists across sessions** — Maintain learnings: which industries convert best, common objections, successful pitch templates, client preferences, market trends, design patterns that work
+6. **Memory persists across sessions** — Multi-layer system:
+   - On session start: `scripts/memory-load.sh` loads MEMORY.md + last 3 handoffs + pending actions + recent learnings
+   - During session: Use MCP memory tools (`store_memory`, `retrieve_memory`, `search_memory`) for real-time reads/writes
+   - Store learnings: `node scripts/memory-manager.mjs store <category> '<json>'`
+   - Store entities: `node scripts/memory-manager.mjs entity <type> '<json>'`
+   - On session stop: `scripts/memory-extract.sh` creates handoff → `scripts/memory-sync.sh` commits to GitHub
+   - Periodic: `node scripts/memory-manager.mjs snapshot` for full state backup
+   - Cleanup: `node scripts/memory-manager.mjs consolidate` to deduplicate, `prune [days]` to remove stale entries
 
 7. **Audit trail maintained** — Every action logged with timestamp, agent name, action type, outcome, any approvals or blockers
 
@@ -91,6 +104,9 @@ You understand client psychology. You know which industries are most profitable 
 /deploy [project]    Deploy completed website to production with monitoring
 /report              Generate weekly business performance summary: pipeline, revenue, team metrics
 /memory [query]      Query persistent memory (market insights, learnings, templates, objections)
+/memory-stats        Show memory statistics (entries per category, disk usage, session count)
+/memory-snapshot     Create a full state snapshot of all memory
+/memory-search [q]   Semantic search across all memory stores
 /health              Check agent health, MCP connectivity, dashboard sync status
 ```
 
@@ -183,9 +199,33 @@ DevOps:
 ├── settings.json              # Permissions, tools, hooks configuration
 └── mcp.json                   # MCP server configurations
 
+memory/                        # Persistent cross-session memory (committed to GitHub)
+├── MEMORY.md                  # Hot working memory (loaded every session)
+├── sessions/                  # Session handoff ledgers
+├── learnings/                 # Structured knowledge base (JSONL)
+│   ├── clients.jsonl          # Client preferences, history
+│   ├── market.jsonl           # Market insights, trends
+│   ├── templates.jsonl        # Successful templates
+│   ├── objections.jsonl       # Common objections & rebuttals
+│   ├── patterns.jsonl         # Code & design patterns
+│   └── competitive.jsonl      # Competitor analysis
+├── context/                   # Active state
+│   ├── active-projects.json   # Current projects
+│   ├── pipeline.json          # Sales pipeline state
+│   └── pending-actions.json   # Queued actions
+├── entities/                  # Knowledge graph
+│   ├── people.jsonl           # Contacts, leads, clients
+│   ├── companies.jsonl        # Business entities
+│   └── relationships.jsonl    # Entity relationships
+└── snapshots/                 # Full state backups
+
 scripts/
 ├── dashboard-sync.sh          # Push updates to dashboard API
-└── setup-claude-code.sh       # Install MCP servers, validate config
+├── setup-claude-code.sh       # Install MCP servers, validate config
+├── memory-load.sh             # Load memory at session start
+├── memory-extract.sh          # Extract learnings at session end
+├── memory-sync.sh             # Commit memory changes to GitHub
+└── memory-manager.mjs         # Node.js memory management CLI
 
 src/                           # Dashboard React application
 ├── components/                # React components by feature

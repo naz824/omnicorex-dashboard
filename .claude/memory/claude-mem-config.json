@@ -1,0 +1,45 @@
+{
+  "description": "Claude-Mem plugin configuration for OmnicoreX. Install with: /plugin marketplace add thedotmack/claude-mem",
+  "setup_instructions": [
+    "1. In Claude Code terminal: /plugin marketplace add thedotmack/claude-mem",
+    "2. Then: /plugin install claude-mem",
+    "3. Restart Claude Code",
+    "4. Claude-mem will auto-capture tool usage and compress observations",
+    "5. Context from previous sessions will automatically appear in new sessions"
+  ],
+  "integration_notes": {
+    "works_with": "OmnicoreX multi-layer memory system",
+    "layer": "Auto-capture layer that supplements the manual JSONL/GitHub system",
+    "storage": "SQLite database at ~/.claude-mem/",
+    "features": [
+      "Automatic tool usage capture",
+      "AI-powered compression of session observations",
+      "Progressive disclosure (high-level overview first, deeper on request)",
+      "Multilingual support",
+      "Endless Mode for extended sessions"
+    ]
+  },
+  "alternative_memory_servers": {
+    "mcp-memory-service": {
+      "description": "Advanced semantic memory with embeddings (already configured in mcp.json)",
+      "repo": "https://github.com/doobidoo/mcp-memory-service",
+      "install": "Already configured — starts automatically via npx"
+    },
+    "continuous-claude-v3": {
+      "description": "PostgreSQL + pgvector cross-session learning with daemon monitoring",
+      "repo": "https://github.com/parcadei/Continuous-Claude-v3",
+      "install": "git clone https://github.com/parcadei/Continuous-Claude-v3.git && cd Continuous-Claude-v3/opc && uv run python -m scripts.setup.wizard",
+      "requires": "Docker for local PostgreSQL, or remote PostgreSQL with pgvector extension",
+      "note": "Recommended for advanced use when you need semantic recall across hundreds of sessions"
+    },
+    "mcp-memory-keeper": {
+      "description": "Lightweight MCP server for persistent context management",
+      "repo": "https://github.com/mkreyman/mcp-memory-keeper",
+      "install": "npx -y mcp-memory-keeper"
+    },
+    "contextstream": {
+      "description": "Automatic memory via hooks — saves decisions, lessons, project context",
+      "repo": "https://github.com/contextstream/claude-code"
+    }
+  }
+}
